@@ -1,4 +1,6 @@
-# prover generate MQ system and Result V by py/prover.py
+# hack_circom (3-pass identification protocol)
+
+## prover generate MQ system and Result V by py/prover.py
 ```bash
 python3 py/prover.py
 ```
@@ -18,23 +20,23 @@ and different ch will also print on the terminal like :
     ch2 [-5, 1] [2, -5] [64, 211, 214]
     ch3 [-5, 1] [5, 6] [1, 6, 8]
 ```
-
+## Run prover circom to get commitment
 ```bash
 yarn circom:dev --circuit prover
 ```
 this will help you generate commitments by Poseidon Hash
 
-choose the ch you want and get prover_data from challenge.json
+## choose the ch you want and get prover_data from challenge.json
 ```bash
 python3 py/verifier.py
 ```
 Automatically help you to copy the commitments and paste to the murphy.json
 
+## Run murphy circom to generate proof
 ```bash
 yarn circom:dev --circuit murphy
 ```
 Finally, the circuit is finish.
-# circom-starter
 
 A basic circom project using [Hardhat](https://github.com/nomiclabs/hardhat) and [hardhat-circom](https://github.com/projectsophon/hardhat-circom). This combines the multiple steps of the [Circom](https://github.com/iden3/circom) and [SnarkJS](https://github.com/iden3/snarkjs) workflow into your [Hardhat](https://hardhat.org) workflow.
 
