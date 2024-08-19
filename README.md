@@ -1,5 +1,7 @@
 # prover generate MQ system and Result V by py/prover.py
-`python3 py/prover.py`
+```bash
+python3 py/prover.py
+```
 the answer for differnt challenges will be writen in circuits/prover.json
 and different ch will also print on the terminal like : 
 
