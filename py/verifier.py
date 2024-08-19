@@ -1,15 +1,15 @@
 import numpy as np
 import json
 def get_coefficients():
-    read_file = open("coefficient_save.json", "r")
+    read_file = open("coefficient.json", "r")
     data = json.load(read_file)
     coefficients = data['coefficients']
     return coefficients
 
 def get_result():
-    read_file = open("coefficient_save.json", "r")
+    read_file = open("coefficient.json", "r")
     data = json.load(read_file)
-    result = data['result']
+    result = data['result_v']
     return result
 
 
@@ -40,6 +40,48 @@ def compute_G(r0, r1, coefficients):
     G = P_r0_plus_r1 - P_r0 - P_r1 + P_0
     return G
 
+def update_json_values(target_json_path,value):
+    # Read the prover.public.json file
+    with open(target_json_path, 'r') as f:
+        target_json = json.load(f)
+
+    # Update the target JSON object with new c1, c2, c3 values
+    target_json['ch'] = value[0]
+    target_json['a'] = value[1]
+    target_json['b'] = value[2]
+    target_json['c'] = value[3]
+    target_json['d'] = value[4]
+
+    # Save the updated JSON back to the target file (murphy.json)
+    with open(target_json_path, 'w') as f:
+        json.dump(target_json, f, indent=2)
+
+    return target_json
+
+def update_ans_values(public_json_path, target_json_path):
+    # Read the prover.public.json file
+    with open(public_json_path, 'r') as f:
+        prover_data = json.load(f)
+    
+    # Extract the required values from prover.public.json
+    c_values = prover_data[:3]  # Assuming the first three values correspond to c1, c2, c3
+
+    # Read the target murphy.json file
+    with open(target_json_path, 'r') as f:
+        target_json = json.load(f)
+
+    # Update the target JSON object with new c1, c2, c3 values
+    target_json['c1'] = c_values[0]
+    target_json['c2'] = c_values[1]
+    target_json['c3'] = c_values[2]
+
+    # Save the updated JSON back to the target file (murphy.json)
+    with open(target_json_path, 'w') as f:
+        json.dump(target_json, f, indent=2)
+
+    return target_json
+
+
 def get_proof(ch,c1,c2,c3):
     coefficients = get_coefficients()
     result = get_result()
@@ -50,6 +92,7 @@ def get_proof(ch,c1,c2,c3):
         result1 = r - t
         computed_result = calculate_P(r, coefficients)
         result2 = computed_result - e
+        update_json_values('circuits/murphy.json',[0, result1.tolist(), result2.tolist(), t.tolist(), e.tolist()])
         return result1.tolist(), result2.tolist(), t.tolist(), e.tolist()
     if ch == 2:
         result_array = np.array(result)
@@ -59,6 +102,7 @@ def get_proof(ch,c1,c2,c3):
         f_r = calculate_P(r, coefficients)
         g_t_r = compute_G(t, r, coefficients)
         result2 = result_array - f_r - g_t_r - c3
+        update_json_values('circuits/murphy.json',[1, r.tolist(), list(map(int, result2)), t.tolist(), e.tolist()])
         return r.tolist(), list(map(int, result2)), t.tolist(), e.tolist()
     if ch == 3:
         r = np.array(c1)
@@ -66,9 +110,19 @@ def get_proof(ch,c1,c2,c3):
         e = np.array(c3)
         g_t_r = compute_G(t, r, coefficients)
         result2 = g_t_r + e
-        
+        update_json_values('circuits/murphy.json',[2, r.tolist() ,list(map(int, result2)), t.tolist(), e.tolist()])
         return r.tolist() ,list(map(int, result2)), t.tolist(), e.tolist()
     else:
         return "Invalid choice"
 
-print("proof",get_proof(2 ,[8, 3], [0, -6], [715, 446, 739]))
+# Example usage:
+public_json_path = 'artifacts/circom/prover.public.json'
+target_json_path = 'circuits/murphy.json'
+
+# Update the target murphy.json
+updated_json = update_ans_values(public_json_path, target_json_path)
+
+# Paste the prover_data you get from the prover
+prover_data = 1, [7, 1], [5, -4], [202, 452, 349]
+
+print("proof",get_proof(*prover_data))

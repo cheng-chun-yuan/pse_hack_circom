@@ -3,8 +3,8 @@ import json
 
 def initialize_coefficients(m, n, low=0):
     """Initialize coefficients for the quadratic system."""
-    p_ij = np.random.randint(0, 10, size=(m, n, n))  # Coefficients for x_i * x_j
-    p_i = np.random.randint(0, 10, size=(m, n))      # Coefficients for x_i
+    p_ij = np.random.randint(low, 10, size=(m, n, n))  # Coefficients for x_i * x_j
+    p_i = np.random.randint(low, 10, size=(m, n))      # Coefficients for x_i
     p_0 = np.zeros(m)                               # Constant coefficients
     return {'p_ij': p_ij.tolist(), 'p_i': p_i.tolist(), 'p_0': p_0.tolist()}
 
@@ -48,7 +48,7 @@ print("s:", s)
 
 # Calculate P(s)
 result_v = calculate_P(s, coefficients)
-print("P(s):", result_v)
+print("P(s):", list(map(int, result_v)))
 #also write the result_v to file_path
 
 # result_v and MQ system coefficients are public and can be shared with the verifier
@@ -59,8 +59,6 @@ data_to_save = {
 }
 with open(file_path, 'w') as f:
     json.dump(data_to_save, f, indent=4)
-
-print(f"Coefficients and result_v saved to {file_path}")
 
 #Separate the x randomly to get r0 and r1
 r0 = np.random.randint(0, 10, size=n)
@@ -75,16 +73,31 @@ P_r0 = calculate_P(r0, coefficients)
 e0 = np.random.randint(0, 10, size=m)
 e1 = P_r0 - e0
 
-print("r0:", r0)
-print("r1:", r1)
-print("t0:", t0)
-print("t1:", t1)
-print("e0:", e0)
-print("e1:", e1)
+print("r0,r1", r0, r1)
+print("t0,t1:", t0,t1)
+print("e0,e1:", e0,e1)
+
+
 print("ans1", list(map(int, r1)), list(map(int, compute_G(t1, r1, coefficients))))
 print("ans2", list(map(int, t0)), list(map(int, e0)))
 print("ans3", list(map(int, t1)), list(map(int, e1)))
 
-print("ch1", 1, r0.tolist(), t1.tolist(), list(map(int, e1)))
-print("ch2", 2, r1.tolist(), t1.tolist(), list(map(int, e1)))
-print("ch3", 3, r1.tolist(), t0.tolist(), list(map(int, e0)))
+with open('circuits/prover.json', 'w') as f:
+    json.dump({
+        'ch1_a': list(map(int, r1)),
+        'ch1_b': list(map(int, compute_G(t1, r1, coefficients))),
+        'ch2_a': list(map(int, t0)),
+        'ch2_b': list(map(int, e0)),
+        'ch3_a': list(map(int, t1)),
+        'ch3_b': list(map(int, e1))
+    }, f, indent=4)
+
+with open ('challenges.json', 'w') as f:
+    json.dump({
+        'ch1': [1, r0.tolist(), t1.tolist(), list(map(int, e1))],
+        'ch2': [2, r1.tolist(), t1.tolist(), list(map(int, e1))],
+        'ch3': [3, r1.tolist(), t0.tolist(), list(map(int, e0))]
+    }, f, indent=4)
+print("ch1",[1, r0.tolist(), t1.tolist(), list(map(int, e1))])
+print("ch2",[2, r1.tolist(), t1.tolist(), list(map(int, e1))])
+print("ch3",[3, r1.tolist(), t0.tolist(), list(map(int, e0))])
