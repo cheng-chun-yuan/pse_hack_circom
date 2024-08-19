@@ -22,11 +22,11 @@ yarn circom:dev --circuit prover
 ```
 this will help you generate commitments by Poseidon Hash
 
-paste the ch you want from prover to prover_data
+choose the ch you want and get prover_data from challenge.json
 ```bash
 python3 py/verifier.py
 ```
-copy the commitments and paste to the murphy.json
+Automatically help you to copy the commitments and paste to the murphy.json
 
 ```bash
 yarn circom:dev --circuit murphy

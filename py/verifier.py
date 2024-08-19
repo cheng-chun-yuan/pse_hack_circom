@@ -122,7 +122,10 @@ target_json_path = 'circuits/murphy.json'
 # Update the target murphy.json
 updated_json = update_ans_values(public_json_path, target_json_path)
 
-# Paste the prover_data you get from the prover
-prover_data = 1, [7, 1], [5, -4], [202, 452, 349]
+# Choose your choice
+choice = 1
+# Get the prover data from challenges.json according to the choice
+with open('challenges.json', 'r') as f:
+    prover_data = json.load(f)[f'ch{choice}']
 
 print("proof",get_proof(*prover_data))
