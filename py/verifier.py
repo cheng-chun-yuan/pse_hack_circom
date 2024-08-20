@@ -58,7 +58,7 @@ def update_json_values(target_json_path,value):
 
     return target_json
 
-def update_ans_values(public_json_path, target_json_path):
+def update_choice_values(public_json_path, target_json_path):
     # Read the prover.public.json file
     with open(public_json_path, 'r') as f:
         prover_data = json.load(f)
@@ -93,7 +93,7 @@ def get_proof(ch,c1,c2,c3):
         computed_result = calculate_P(r, coefficients)
         result2 = computed_result - e
         update_json_values('circuits/murphy.json',[0, result1.tolist(), result2.tolist(), t.tolist(), e.tolist()])
-        return result1.tolist(), result2.tolist(), t.tolist(), e.tolist()
+        return result1.tolist(), list(map(int, result2)), t.tolist(), e.tolist()
     if ch == 2:
         result_array = np.array(result)
         r = np.array(c1)
@@ -120,12 +120,19 @@ public_json_path = 'artifacts/circom/prover.public.json'
 target_json_path = 'circuits/murphy.json'
 
 # Update the target murphy.json
-updated_json = update_ans_values(public_json_path, target_json_path)
+updated_json = update_choice_values(public_json_path, target_json_path)
 
-# Choose your choice
-choice = 1
+
+choice=0
+while choice==0:
+    print ("""
+    1.Challenge 1
+    2.Challenge 2
+    3.Challenge 3
+    """)
+    choice=input("Whic would you like? ") 
+
 # Get the prover data from challenges.json according to the choice
 with open('challenges.json', 'r') as f:
     prover_data = json.load(f)[f'ch{choice}']
-
 print("proof",get_proof(*prover_data))
