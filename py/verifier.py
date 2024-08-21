@@ -92,7 +92,7 @@ def get_proof(ch,c1,c2,c3):
         result1 = r - t
         computed_result = calculate_P(r, coefficients)
         result2 = computed_result - e
-        update_json_values('circuits/murphy.json',[0, result1.tolist(), result2.tolist(), t.tolist(), e.tolist()])
+        update_json_values('circuits/murphy.json',[0, result1.tolist(), list(map(int, result2)), t.tolist(), e.tolist()])
         return result1.tolist(), list(map(int, result2)), t.tolist(), e.tolist()
     if ch == 2:
         result_array = np.array(result)
@@ -126,9 +126,10 @@ updated_json = update_choice_values(public_json_path, target_json_path)
 choice=0
 while choice==0:
     print ("""
-    1.Challenge 1
-    2.Challenge 2
-    3.Challenge 3
+    Chanllenge List
+    1.Ch1
+    2.Ch2
+    3.Ch3
     """)
     choice=input("Whic would you like? ") 
 
