@@ -67,3 +67,4 @@ To build a single circuit during development, you can use the `--circuit` CLI pa
 
 `yarn circom:prod` for production builds (using `Date.now()` as entropy)
 # pse_hack_circom
+# xd-website
